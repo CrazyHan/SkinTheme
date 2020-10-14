@@ -19,6 +19,9 @@ public class SkinResources {
     Resources mSkinResources;
     private String mPkgName;
 
+    public void setSkinResources(Resources mSkinResources) {
+        this.mSkinResources = mSkinResources;
+    }
 
     private SkinResources(Context context) {
         this.context = context;
