@@ -2,25 +2,37 @@ package com.slh.skin.lib;
 
 import android.app.Activity;
 import android.app.Application;
+import android.nfc.Tag;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.LayoutInflaterCompat;
 
+import com.slh.skin.lib.utils.SkinThemeUtils;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Observable;
 
+/**
+ * 在Android P之后mFactorySet已经不能使用反射，根据LayoutInflaterCompat里面直接反射mFactory2就行了
+ */
 public class ActivityLifecycleCallbacksManager implements Application.ActivityLifecycleCallbacks {
 
     HashMap<Activity, SkinFactory> skinFactories = new HashMap<>();
 
-
+    private static final String TAG = ActivityLifecycleCallbacksManager.class.getName();
 
     Observable observable;
 
+    /**
+     * 我们把{@link SkinManager}当做管理类
+     * @param observable
+     */
     public ActivityLifecycleCallbacksManager(Observable observable) {
         this.observable = observable;
     }
@@ -28,17 +40,37 @@ public class ActivityLifecycleCallbacksManager implements Application.ActivityLi
     @Override
     public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
 
+        SkinThemeUtils.updateStatusBarColor(activity);
+
         LayoutInflater layoutInflater = activity.getLayoutInflater();
-        Field mFactorySet = null;
-        try {
-            mFactorySet = LayoutInflater.class.getDeclaredField("mFactorySet");
-            mFactorySet.setAccessible(true);
-            mFactorySet.set(layoutInflater, false);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+        SkinFactory factory2 = new SkinFactory(activity);
+
+        if(Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {//28及以前的版本
+            try {
+                Field mFactorySet = LayoutInflater.class.getDeclaredField("mFactorySet");
+                mFactorySet.setAccessible(true);
+                mFactorySet.setBoolean(layoutInflater,true);
+                layoutInflater.setFactory2(factory2);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }else{
+            try {
+                Field mFactory2 = LayoutInflater.class.getDeclaredField("mFactory2");
+                Field[] fields = LayoutInflater.class.getDeclaredFields();
+                for (Field field : fields) {
+                    Log.d(TAG, "onCreate: field=" +field.getName());
+                }
+
+                mFactory2.setAccessible(true);
+                Log.d(TAG, "mFactory2 可以得到");
+                mFactory2.set(layoutInflater,factory2);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                Log.e(TAG,"找不到factory2");
+                e.printStackTrace();
+            }
         }
-        SkinFactory factory2 = new SkinFactory();
-        LayoutInflaterCompat.setFactory2(layoutInflater, factory2);
+        skinFactories.put(activity, factory2);
         observable.addObserver(factory2);
 
 
@@ -71,6 +103,7 @@ public class ActivityLifecycleCallbacksManager implements Application.ActivityLi
 
     @Override
     public void onActivityDestroyed(@NonNull Activity activity) {
-
+        SkinFactory factory = skinFactories.remove(activity);
+        SkinManager.getInstance().deleteObserver(factory);
     }
 }

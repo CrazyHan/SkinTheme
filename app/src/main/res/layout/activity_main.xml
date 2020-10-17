@@ -5,12 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/box_inset_layout_padding"
-    tools:context=".MainActivity"
-    tools:deviceIds="wear">
+    tools:context=".MainActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/background_1"
         android:padding="@dimen/inner_frame_layout_padding">
 
         <TextView
@@ -20,5 +20,12 @@
             android:textColor="@color/textColor"
             android:text="@string/hello_world" />
 
+
     </FrameLayout>
+    <Button
+        android:id="@+id/btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/btnColor"
+        android:background="@color/colorPrimary"></Button>
 </LinearLayout>

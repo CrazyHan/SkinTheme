@@ -1,16 +1,24 @@
 package com.slh.skin.lib.utils;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public class SkinResources {
 
+    private String TAG = SkinResources.class.getName();
+
     Context context;
 
-    boolean isUseDefault;
+    boolean isUseDefault = true;
 
     String mSkinPath;
 
@@ -56,21 +64,11 @@ public class SkinResources {
     }
 
     //设置了路径还要更新所有的 UI
-    public void applySkin(String skinPath){
+    public void applySkin(String skinPath,String pkgName){
 
         this.mSkinPath = skinPath;
         isUseDefault = false;
-
-        try {
-            AssetManager assetManager = AssetManager.class.newInstance();
-            mSkinResources = new Resources(assetManager, mAppResources.getDisplayMetrics(),
-                    mAppResources.getConfiguration());
-
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        }
+        mPkgName = pkgName;
 
     }
 
@@ -81,6 +79,8 @@ public class SkinResources {
 
         String resName = mAppResources.getResourceEntryName(resId);
         String resType = mAppResources.getResourceTypeName(resId);
+
+        Log.d(TAG, "getIdentifier: 类型="+resType+"名字="+resName);
 
         int skinId = mSkinResources.getIdentifier(resName,resType,mPkgName);
         return skinId;
@@ -121,6 +121,9 @@ public class SkinResources {
     }
 
     public int getColor(int resId) {
+        if (isUseDefault) {
+            return mAppResources.getColor(resId);
+        }
         int colorId = getIdentifier(resId);
         if (resId <= 0) {
             return mAppResources.getColor(resId);
