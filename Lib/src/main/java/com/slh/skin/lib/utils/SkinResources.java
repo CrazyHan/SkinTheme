@@ -95,7 +95,7 @@ public class SkinResources {
         if (drawableId == 0) {
             return mAppResources.getDrawable(resId);
         }
-        return mSkinResources.getDrawable(resId);
+        return mSkinResources.getDrawable(drawableId);
     }
 
 
@@ -116,7 +116,7 @@ public class SkinResources {
         if (colorListId == 0) {
             return mAppResources.getColorStateList(resId);
         }
-        return mSkinResources.getColorStateList(resId);
+        return mSkinResources.getColorStateList(colorListId);
 
     }
 
@@ -128,7 +128,7 @@ public class SkinResources {
         if (resId <= 0) {
             return mAppResources.getColor(resId);
         }
-        return mSkinResources.getColor(resId);
+        return mSkinResources.getColor(colorId);
     }
 
 

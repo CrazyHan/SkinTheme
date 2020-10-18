@@ -1,37 +1,65 @@
 package com.slh.skin;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
+import android.view.ViewGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
-import com.slh.skin.lib.SkinManager;
+import com.slh.skin.fragment.MusicFragment;
+import com.slh.skin.fragment.RadioFragment;
+import com.slh.skin.fragment.VideoFragment;
+import com.slh.skin.widget.MyTabLayout;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView mTextView;
-    String TAG = MainActivity.class.getName();
-    boolean d = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //控件的收集在这里完成
         setContentView(R.layout.activity_main);
 
-        mTextView = (TextView) findViewById(R.id.text);
+        View view = findViewById(R.id.test);
 
-        mTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(d){
-                    SkinManager.getInstance().loadSkin("data/data/com.slh.skin/skin/skin-debug.apk");
-                }else{
-                    SkinManager.getInstance().loadSkin("");
-                }
-                d = !d;
-            }
-        });
+        MyTabLayout tabLayout = findViewById(R.id.tabLayout);
+        ViewPager viewPager = findViewById(R.id.viewPager);
+        List<Fragment> list = new ArrayList<>();
+        list.add(new MusicFragment());
+        list.add(new VideoFragment());
+        list.add(new RadioFragment());
+        List<String> listTitle = new ArrayList<>();
+        listTitle.add("音乐");
+        listTitle.add("视频");
+        listTitle.add("电台");
+        MyFragmentPagerAdapter myFragmentPagerAdapter = new MyFragmentPagerAdapter
+                (getSupportFragmentManager(), list, listTitle);
+        viewPager.setAdapter(myFragmentPagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
 
+    }
+
+
+    /**
+     * 进入换肤
+     *
+     * @param view
+     */
+    public void skinSelect(View view) {
+        startActivity(new Intent(this, SkinActivity.class));
     }
 }

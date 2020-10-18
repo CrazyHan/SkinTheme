@@ -1,31 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/test"
     android:layout_height="match_parent"
-    android:padding="@dimen/box_inset_layout_padding"
-    tools:context=".MainActivity">
+    android:background="@drawable/t_window_bg"
+    android:orientation="vertical">
 
-    <FrameLayout
+
+    <!--测试换肤==>图片-->
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/background_1"
-        android:padding="@dimen/inner_frame_layout_padding">
-
-        <TextView
-            android:id="@+id/text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/textColor"
-            android:text="@string/hello_world" />
+        android:layout_height="?actionBarSize"
+        android:background="@drawable/toolbar"/>
 
 
-    </FrameLayout>
     <Button
-        android:id="@+id/btn"
-        android:layout_width="wrap_content"
+        android:textColor="?colorPrimary"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/btnColor"
-        android:background="@color/colorPrimary"></Button>
+        android:onClick="skinSelect"
+        android:text="选择皮肤"/>
+
+
+    <!--测试换肤==> viewPager 与 fragment-->
+    <com.slh.skin.widget.MyTabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:tabIndicatorColor="@color/tabSelectedTextColor"
+        app:tabTextColor="@color/tab_selector"/>
+
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
 </LinearLayout>
